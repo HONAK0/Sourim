@@ -41,3 +41,23 @@ void stradd(char arr[], char str[]){
 		charadd(arr, str[i]);
 	}
 }
+int strcheck(char arr1[], char *arr2, int len){
+	int check = 0;
+	int ii = 0;
+	if(strlen(arr1) > strlen(arr2)){
+		return 0;
+	}
+	for(int i = 0; i < len; i++){
+		//tputchar(arr2[ii]);
+		//tputchar(arr1[i]);
+		if(arr2[ii] == arr1[i]){
+			check = 1;
+			ii++;
+		} else if(ii == strlen(arr2)) {
+			break;
+		} else if(ii < strlen(arr2)) {
+			check = 0;
+		}
+	}
+	return check;
+}
