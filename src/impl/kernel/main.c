@@ -4,6 +4,7 @@
 #include "drivers/port.h"
 #include "user_files/pcmem.h"
 #include "contol/power.h"
+#include "drivers/com_ports.h"
 
 void kstart(){
     tset_color(LIGHT_CYAN,BLACK);
@@ -83,6 +84,24 @@ void krun(){
         reboot();
     } else if(strcheck(command, "shutdown", 32)){
         shutdown();
+    } else if(strcheck(command, "checkports", 32)){
+        print("COM1:");
+        tputchar(com_read(COM1));
+        print("\nCOM2:");
+        tputchar(com_read(COM2));
+        print("\nCOM3:");
+        tputchar(com_read(COM3));
+        print("\nCOM4:");
+        tputchar(com_read(COM4));
+        print("\nCOM5:");
+        tputchar(com_read(COM5));
+        print("\nCOM6:");
+        tputchar(com_read(COM6));
+        print("\nCOM7:");
+        tputchar(com_read(COM7));
+        print("\nCOM8:");
+        tputchar(com_read(COM8));
+        tputchar('\n');
     } else {
         print_log(CYAN, "WARN", "Unknown command, please type 'help'\n", " > ");
     }
