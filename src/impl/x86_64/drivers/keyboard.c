@@ -83,7 +83,7 @@ void tkeyboard_input(){
 void keyboard_input(char tinput[]){
     memset(tinput, '\0', 32);
     tkeyboard_input();
-    for(int i; i < input_max_size; i++){
+    for(int i = 0; i < input_max_size; i++){
         tinput[i] = input[i];
     }
 }
