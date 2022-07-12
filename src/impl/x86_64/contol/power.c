@@ -1,5 +1,5 @@
 #include "drivers/port.h"
-#include "terminal.h"
+#include "screen/terminal.h"
 
 #define bit(n) (1<<(n))
 #define check_flag(flags, n) ((flags) & bit(n))

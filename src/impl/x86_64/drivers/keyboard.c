@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include "drivers/port.h"
 #include "drivers/ports.h"
-#include "terminal.h"
+#include "screen/terminal.h"
 #include "str.h"
 #define input_max_size 512
 
@@ -54,6 +54,9 @@ void tkeyboard_input(){
     int len = 0;
     memset(input, '\0', 32);
     while(1){
+        if(!(port_byte_in(0x60 + 5) & 1)){
+            show_panic("The keyboard was disconnected, connect a PS/2 keyboard and restart the system.");
+        }
         char *key = keyboard_key();
         if(timer == 0){
             if(key == (char*)"ENTER" && enterpressed == 0){

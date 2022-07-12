@@ -1,16 +1,11 @@
-#include "terminal.h"
+#include "screen/terminal.h"
 #include "drivers/keyboard.h"
 #include "str.h"
 #include "drivers/port.h"
 #include "user_files/pcmem.h"
 #include "contol/power.h"
 #include "drivers/com_ports.h"
-
-void kstart(){
-    tset_color(LIGHT_CYAN,BLACK);
-    print("Welcome to Sourim OS\n\n");
-    tset_color(WHITE,BLACK);
-}
+#include "panic.h"
 
 void print_log(enum color log_color, char *log, char *message, char *joiner){
     tset_color(log_color, BLACK);
@@ -18,6 +13,22 @@ void print_log(enum color log_color, char *log, char *message, char *joiner){
     tset_color(WHITE, BLACK);
     print(joiner);
     print(message);
+}
+
+void kstart(){
+    print_log(LIGHT_CYAN, "WAIT", "Init PS/2 KEYBOARD\n", " > ");
+    if(port_byte_in(0x60 + 5) & 1){
+        tputchar('\2');
+        print_log(GREEN, "OK", "Init PS/2 KEYBOARD  \n", " > ");
+    } else {
+        tputchar('\2');
+        print_log(RED, "ERR", "Init PS/2 KEYBOARD \n", " > ");
+        show_panic("Initilization PS/2 KEYBOARD failed! Connect a PS/2 keyboard to work with the operating system");
+    }
+
+    tset_color(LIGHT_CYAN,BLACK);
+    print("\nWelcome to Sourim OS\n\n");
+    tset_color(WHITE,BLACK);
 }
 
 void krun(){
