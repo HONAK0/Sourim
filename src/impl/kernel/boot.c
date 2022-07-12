@@ -1,5 +1,5 @@
 #include "main.h"
-#include "terminal.h"
+#include "screen/terminal.h"
 
 void boot(){
     tset_color(WHITE, BLACK);

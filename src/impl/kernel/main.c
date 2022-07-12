@@ -1,33 +1,41 @@
-#include "terminal.h"
+#include "screen/terminal.h"
 #include "drivers/keyboard.h"
 #include "str.h"
+#include "drivers/port.h"
 #include "user_files/pcmem.h"
+#include "contol/power.h"
+#include "drivers/com_ports.h"
+#include "panic.h"
 
-#define NAMEOS "Sourim"
-#define VERSIONOS "1.0"
-
-void kstart(){
-    print("Welcome!\nOS: ");
-    print(NAMEOS);
-    print("\nVersion Kernel: ");
-    print(VERSIONOS);
-    print("\n\n");
-}
-
-void print_log(enum color log_color, char *log, char *message){
-    print("[");
+void print_log(enum color log_color, char *log, char *message, char *joiner){
     tset_color(log_color, BLACK);
     print(log);
     tset_color(WHITE, BLACK);
-    print("] ");
+    print(joiner);
     print(message);
+}
+
+void kstart(){
+    print_log(LIGHT_CYAN, "WAIT", "Init PS/2 KEYBOARD\n", " > ");
+    if(port_byte_in(0x60 + 5) & 1){
+        tputchar('\2');
+        print_log(GREEN, "OK", "Init PS/2 KEYBOARD  \n", " > ");
+    } else {
+        tputchar('\2');
+        print_log(RED, "ERR", "Init PS/2 KEYBOARD \n", " > ");
+        show_panic("Initilization PS/2 KEYBOARD failed! Connect a PS/2 keyboard to work with the operating system");
+    }
+
+    tset_color(LIGHT_CYAN,BLACK);
+    print("\nWelcome to Sourim OS\n\n");
+    tset_color(WHITE,BLACK);
 }
 
 void krun(){
     char enter_input[512];
-    tset_color(GREEN, BLACK);
-    print(namepc);
+    tset_color(WHITE, BLACK);
     print("@");
+    tset_color(CYAN, BLACK);
     print(username);
     tset_color(WHITE, BLACK);
     print(" $ ");
@@ -46,13 +54,17 @@ void krun(){
             for(int i = strlen(command)+1; i < strlen(enter_input); i++){            
                 tputchar(enter_input[i]);
             }
+            tputchar('\n');
         } else {
-            print_log(RED, "ERROR", "Arguments is empty\n");
+            print_log(RED, "ERROR", "Arguments is empty\n", " > ");
         }
     } else if(strcheck(command, "help", 32)){
-        print("echo <text*> - Print the text in terminal\n");
-        print("clear - Clear screen\n");
-        print("setusername <name*> - Set username\n");
+        print_log(LIGHT_GREEN, "echo <text*>","        Print the text in terminal\n","");
+        print_log(LIGHT_GREEN, "clear","               Clear screen\n",              "");
+        print_log(LIGHT_GREEN, "setusername <name*>"," Set username\n",              "");
+        print_log(LIGHT_GREEN, "russia","              Show Russian flag\n",         "");
+        print_log(LIGHT_GREEN, "shutdown","            Power off\n",                 "");
+        print_log(LIGHT_GREEN, "reboot","              Restart machine\n",           "");
     } else if(strcheck(command, "clear", 32)){
         clear();
     } else if(strcheck(command, "setusername", 32)){
@@ -62,11 +74,47 @@ void krun(){
                 username[ii] = enter_input[i];
                 ii++;
             }
-            print_log(GREEN, "OK", "Username is changed\n");
+            print_log(GREEN, "OK", "Username is changed\n", " > ");
         } else {
-            print_log(RED, "ERROR", "Arguments is empty\n");
+            print_log(RED, "ERROR", "Arguments is empty\n", " > ");
         }
+    } else if(strcheck(command, "russia", 32)){
+        for(int y = 0; y < 3; y++){
+            for(int x = 0; x < 10; x++){
+                if(y == 0){
+                    tset_color(WHITE, WHITE);
+                } else if(y == 1){
+                    tset_color(WHITE, BLUE);
+                } else if(y == 2){
+                    tset_color(WHITE, RED);
+                }
+                tputchar(' ');
+            }
+            tputchar('\n');
+        }
+    } else if(strcheck(command, "reboot", 32)){
+        reboot();
+    } else if(strcheck(command, "shutdown", 32)){
+        shutdown();
+    } else if(strcheck(command, "checkports", 32)){
+        print("COM1:");
+        tputchar(com_read(COM1));
+        print("\nCOM2:");
+        tputchar(com_read(COM2));
+        print("\nCOM3:");
+        tputchar(com_read(COM3));
+        print("\nCOM4:");
+        tputchar(com_read(COM4));
+        print("\nCOM5:");
+        tputchar(com_read(COM5));
+        print("\nCOM6:");
+        tputchar(com_read(COM6));
+        print("\nCOM7:");
+        tputchar(com_read(COM7));
+        print("\nCOM8:");
+        tputchar(com_read(COM8));
+        tputchar('\n');
     } else {
-        print_log(CYAN, "WARN", "Unknown command, please type 'help'\n");
+        print_log(CYAN, "WARN", "Unknown command, please type 'help'\n", " > ");
     }
 }
