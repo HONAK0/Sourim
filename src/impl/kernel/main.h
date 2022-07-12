@@ -1,2 +1,0 @@
-void krun();
-void kstart();

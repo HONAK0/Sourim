@@ -1,2 +1,0 @@
-void reboot();
-void shutdown();
