@@ -21,13 +21,6 @@ int enterpressed = 0;
 char input[input_max_size];
 uint16_t oldkey;
 
-int len(uint16_t arr[]){
-    int len;
-	while (arr[len])
-		len++;
-	return len;
-}
-
 uint16_t keyboard_byte_key(){
     uint16_t key = port_byte_in(KEYBOARD_PS2_PORT);
     if(key == 0x3a && oldkey != 0x3a){
@@ -41,7 +34,7 @@ uint16_t keyboard_byte_key(){
     return key;
 }
 char *keyboard_key(){
-    int i;
+    int i = 0;
     while(keyboard_byte_keys[i] != 0){
         if(keyboard_byte_key() == keyboard_byte_keys[i]){
             nullkey = 0;

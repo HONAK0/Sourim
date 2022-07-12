@@ -46,8 +46,8 @@ uint16_t* tbuffer;
 size_t i = 0;
 size_t x = -1;
 size_t y = 0;
-int xcur;
-int ycur;
+int xcur = 0;
+int ycur = 0;
 size_t tgetx(){
 	return x;
 }
@@ -109,13 +109,13 @@ void tputchar(char e){
 			x=0;
 			break;
 		case '\1':
+			if(x == 0){
+                x = TWIDTH+1;
+                y--;
+            }
 			x--;
             i = y * TWIDTH + x;
 			tbuffer[i] = vga_entry(' ', tcolor);
-            if(x < 0){
-                x = TWIDTH;
-                y--;
-            }
 			break;
 		default:
 			i = y * TWIDTH + x;

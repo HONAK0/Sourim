@@ -22,6 +22,7 @@ void print_log(enum color log_color, char *log, char *message, char *joiner){
 
 void krun(){
     char enter_input[512];
+    tset_color(WHITE, BLACK);
     print("@");
     tset_color(CYAN, BLACK);
     print(username);
