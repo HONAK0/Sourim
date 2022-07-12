@@ -145,8 +145,7 @@ void tsetpos(int newx, int newy){
 }
 
 void print(char *data){
-    size_t index = 0;
-    for(; index < strlen(data); index++){
+    for(size_t index = 0; index < strlen(data); index++){
         tputchar(data[index]);
     }
 }
