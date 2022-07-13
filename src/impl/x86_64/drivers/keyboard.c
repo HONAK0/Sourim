@@ -2,6 +2,7 @@
 #include "drivers/port.h"
 #include "drivers/ports.h"
 #include "screen/terminal.h"
+#include "panic.h"
 #include "str.h"
 #define input_max_size 512
 

@@ -1,1 +1,1 @@
-char username[64] = "user";
+char username[32] = "user";

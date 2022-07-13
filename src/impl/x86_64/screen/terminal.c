@@ -23,6 +23,8 @@ enum color {
 	WHITE = 15,
 };
 
+void tset_color(enum color fg, enum color bg);
+
 static inline uint8_t vga_entry_color(enum color fg, enum color bg)
 {
 	return fg | bg << 4;
@@ -37,15 +39,12 @@ uint8_t vga_get_color(enum color fg, enum color bg){
 
 static const size_t TWIDTH = 80;
 static const size_t THEIGHT = 25;
- 
-size_t trow;
-size_t tcolumn;
 uint8_t clearcolor;
 uint8_t tcolor;
 uint16_t* tbuffer;
 size_t i = 0;
-size_t x = -1;
-size_t y = 0;
+int x = 0;
+int y = 0;
 int xcur = 0;
 int ycur = 0;
 size_t tgetx(){
@@ -56,8 +55,6 @@ size_t tgety(){
 }
 
 void clear(){
-    trow = 0;
-    tcolumn = 0;
 	clearcolor = vga_entry_color(WHITE, BLACK);
 	if(tcolor == 0){
 		tcolor = clearcolor;
@@ -84,6 +81,7 @@ void tsetcur(int newx, int newy){
 	ycur = newy;
 }
 void scroll() {
+	tset_color(WHITE, BLACK);
 	clear();
 	/*for(int loop = 0; loop < TWIDTH; loop++) {
 		i = 0 * TWIDTH + loop;
@@ -126,7 +124,7 @@ void tputchar(char e){
 		default:
 			i = y * TWIDTH + x;
             tbuffer[i] = vga_entry(e, tcolor);
-			if(x+1 == TWIDTH){
+			if(x == TWIDTH){
 				x=0;
 				y++;
 			} else{
@@ -136,6 +134,7 @@ void tputchar(char e){
 				y--;
 				scroll();
 			}
+
 			break;
 	}
 	tsetcur(x, y);

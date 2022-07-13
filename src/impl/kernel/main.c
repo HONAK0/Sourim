@@ -6,6 +6,92 @@
 #include "contol/power.h"
 #include "drivers/com_ports.h"
 #include "panic.h"
+#include "kernel.h"
+#include "screen/vga.h"
+
+#define OSNAME "Sourim"
+#define OSVERSION "1.0.7"
+
+char *logo[] = {"           /////          ",
+                "       /////////////      ",
+                "  //////////////////////  ",
+                "//////////////////////////",
+                "///////////.....//////////",
+                "/////////..///////////////",
+                "//////////......//////////",
+                "///////////////../////////",
+                "///////////....///////////",
+                "//////////////////////////",
+                "  //////////////////////  ",
+                "      //////////////      ",
+                "          /////           "
+};
+
+
+void infosystem(int welcome){
+    clear();
+    tset_color(GREEN,BLACK);
+    for(int i=0; i < 13; i++){
+        print(logo[i]);
+        tset_color(WHITE, BLACK);
+        print("    ");
+        switch(i){
+            case 0:
+                tset_color(LIGHT_CYAN,BLACK);
+                tputchar('@');
+                tset_color(LIGHT_GREEN,BLACK);
+                print(username);
+                tset_color(WHITE,BLACK);
+                break;
+            case 1:
+                tset_color(LIGHT_CYAN,BLACK);
+                print("OS: ");
+                tset_color(WHITE,BLACK);
+                print(OSNAME);
+                break;
+            case 2:
+                tset_color(LIGHT_CYAN,BLACK);
+                print("OS Version: ");
+                tset_color(WHITE,BLACK);
+                print(OSVERSION);
+                break;
+            case 3:
+                tset_color(LIGHT_CYAN,BLACK);
+                print("Kernel version: ");
+                tset_color(WHITE,BLACK);
+                print(KERNELVERSION);
+                break;
+            case 4:
+                tset_color(LIGHT_CYAN,BLACK);
+                print("Developers: ");
+                tset_color(WHITE,BLACK);
+                print("Honak(Andrew S.)");
+                break;
+            case 10:
+                tset_color(CYAN,BLACK);
+                print("Test colors:");
+                tset_color(WHITE,BLACK);
+                break;
+            case 11:
+                enum color colors1[] = {BLACK, RED,       GREEN,       BLUE,       CYAN,       BROWN,       MAGENTA};
+                for(int clr=0; clr < 7; clr++){
+                    tset_color(WHITE, colors1[clr]);
+                    print("    ");
+                }
+                break;
+            case 12:
+                enum color colors2[] = {WHITE, LIGHT_RED, LIGHT_GREEN, LIGHT_BLUE, LIGHT_CYAN, LIGHT_BROWN, LIGHT_MAGENTA};
+                for(int clr=0; clr < 7; clr++){
+                    tset_color(WHITE, colors2[clr]);
+                    print("    ");
+                }
+                break;
+        }
+        tset_color(GREEN, BLACK);
+        tputchar('\n');
+    }
+    tset_color(WHITE,BLACK);
+}
 
 void print_log(enum color log_color, char *log, char *message, char *joiner){
     tset_color(log_color, BLACK);
@@ -25,10 +111,8 @@ void kstart(){
         print_log(RED, "ERR", "Init PS/2 KEYBOARD \n", " > ");
         show_panic("Initilization PS/2 KEYBOARD failed! Connect a PS/2 keyboard to work with the operating system");
     }
-
-    tset_color(LIGHT_CYAN,BLACK);
-    print("\nWelcome to Sourim OS\n\n");
-    tset_color(WHITE,BLACK);
+    infosystem(1);
+    //putpixel(1,1,4);
 }
 
 void krun(){
@@ -114,6 +198,9 @@ void krun(){
         print("\nCOM8:");
         tputchar(com_read(COM8));
         tputchar('\n');
+    } else if(strcheck(command, "info", 32)){
+        tputchar('\n');
+        infosystem(0);
     } else {
         print_log(CYAN, "WARN", "Unknown command, please type 'help'\n", " > ");
     }
