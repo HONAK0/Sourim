@@ -102,16 +102,20 @@ void print_log(enum color log_color, char *log, char *message, char *joiner){
 }
 
 void kstart(){
-    print_log(LIGHT_CYAN, "WAIT", "Init PS/2 KEYBOARD\n", " > ");
+    print_log(LIGHT_CYAN, "WAIT", "Init keyboard\n", " > ");
     if(port_byte_in(0x60 + 5) & 1){
         tputchar('\2');
-        print_log(GREEN, "OK", "Init PS/2 KEYBOARD  \n", " > ");
+        print_log(GREEN, "OK", "Init keyboard  \n", " > ");
     } else {
         tputchar('\2');
-        print_log(RED, "ERR", "Init PS/2 KEYBOARD \n", " > ");
-        show_panic("Initilization PS/2 KEYBOARD failed! Connect a PS/2 keyboard to work with the operating system");
+        print_log(RED, "WARN", "Init keyboard\n", " > ");
     }
-    infosystem(1);
+    tset_color(LIGHT_CYAN, BLACK);
+    print("\nWelcome to ");
+    print(OSNAME);
+    print("!\n\n");
+    tset_color(WHITE, BLACK);
+    //infosystem(1);
     //putpixel(1,1,4);
 }
 

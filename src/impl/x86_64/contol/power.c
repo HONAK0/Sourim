@@ -6,7 +6,7 @@
 
 void reboot(){
     clear();
-    print("Rebooting...");
+    print("Reboot...");
     uint8_t v;
     asm volatile ("cli");
     do
@@ -23,7 +23,7 @@ loop:
 }
 void shutdown(){
     clear();
-    print("Shutdowing...");
+    print("Shutdown...");
     port_word_out(0xB004, 0x2000);
     port_word_out(0x604, 0x2000);
     port_word_out(0x4004, 0x3400);
