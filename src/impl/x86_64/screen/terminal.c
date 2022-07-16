@@ -25,12 +25,10 @@ enum color {
 
 void tset_color(enum color fg, enum color bg);
 
-static inline uint8_t vga_entry_color(enum color fg, enum color bg)
-{
+static inline uint8_t vga_entry_color(enum color fg, enum color bg){
 	return fg | bg << 4;
 }
-static inline uint16_t vga_entry(unsigned char uc, uint8_t vcolor)
-{
+static inline uint16_t vga_entry(unsigned char uc, uint8_t vcolor){
 	return (uint16_t) uc | (uint16_t) vcolor << 8;
 }
 uint8_t vga_get_color(enum color fg, enum color bg){
@@ -42,7 +40,7 @@ static const size_t THEIGHT = 25;
 uint8_t clearcolor;
 uint8_t tcolor;
 uint16_t* tbuffer;
-size_t i = 0;
+size_t pos = 0;
 int x = 0;
 int y = 0;
 int xcur = 0;
@@ -62,8 +60,8 @@ void clear(){
     tbuffer = (uint16_t*) 0xB8000;
     for(x = 0; x < TWIDTH; x++){
         for(y = 0; y < THEIGHT; y++){
-            i = y * TWIDTH + x;
-            tbuffer[i] = vga_entry(' ', tcolor);
+            pos = y * TWIDTH + x;
+            tbuffer[pos] = vga_entry(' ', tcolor);
         }
     }
     x = 0;
@@ -83,19 +81,6 @@ void tsetcur(int newx, int newy){
 void scroll() {
 	tset_color(WHITE, BLACK);
 	clear();
-	/*for(int loop = 0; loop < TWIDTH; loop++) {
-		i = 0 * TWIDTH + loop;
-		tbuffer[i] = vga_entry(' ', tcolor);
-	}
-	for(int loopx = 0; loopx < TWIDTH; loopx++){
-		for(int loopy = 1; loopy < THEIGHT; loopy++){
-			i = loopy * TWIDTH + loopx;
-			uint16_t symbol = tbuffer[i];
-			tbuffer[i] = vga_entry(' ', tcolor);
-			i = loopy-1 * TWIDTH + loopx;
-			tbuffer[i] = symbol;
-		}
-	}*/
 }
 void tputchar(char e){
 	switch(e){
@@ -112,8 +97,8 @@ void tputchar(char e){
                 y--;
             }
 			x--;
-            i = y * TWIDTH + x;
-			tbuffer[i] = vga_entry(' ', tcolor);
+            pos = y * TWIDTH + x;
+			tbuffer[pos] = vga_entry(' ', tcolor);
 			break;
 		case '\2':
 			if(y == 0){
@@ -122,19 +107,13 @@ void tputchar(char e){
 			y--;
 			break;
 		default:
-			i = y * TWIDTH + x;
-            tbuffer[i] = vga_entry(e, tcolor);
+			pos = y * TWIDTH + x;
+            tbuffer[pos] = vga_entry(e, tcolor);
 			if(x == TWIDTH){
 				x=0;
 				y++;
-			} else{
-                x++;
-            }
-			if(y >= THEIGHT){
-				y--;
-				scroll();
 			}
-
+			x++;
 			break;
 	}
 	tsetcur(x, y);
@@ -142,6 +121,10 @@ void tputchar(char e){
         xcur = 0;
         ycur++;
     }
+	if(y >= THEIGHT){
+		y--;
+		scroll();
+	}
 	tupdatecur();
 }
 void tsetpos(int newx, int newy){

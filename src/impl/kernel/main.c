@@ -10,7 +10,7 @@
 #include "screen/vga.h"
 
 #define OSNAME "Sourim"
-#define OSVERSION "1.0.7"
+#define OSVERSION "1.0.8"
 
 char *logo[] = {"           /////          ",
                 "       /////////////      ",
@@ -93,22 +93,22 @@ void infosystem(int welcome){
     tset_color(WHITE,BLACK);
 }
 
-void print_log(enum color log_color, char *log, char *message, char *joiner){
+void print_log(enum color log_color, char *log, char *message){
+    tset_color(WHITE, BLACK);
+    print("[");
     tset_color(log_color, BLACK);
     print(log);
     tset_color(WHITE, BLACK);
-    print(joiner);
+    print("] ");
     print(message);
 }
 
 void kstart(){
-    print_log(LIGHT_CYAN, "WAIT", "Init keyboard\n", " > ");
+    print_log(LIGHT_BROWN, "WAIT", "Init keyboard\n");
     if(port_byte_in(0x60 + 5) & 1){
-        tputchar('\2');
-        print_log(GREEN, "OK", "Init keyboard  \n", " > ");
+        print_log(GREEN, "OK", "Init keyboard\n");
     } else {
-        tputchar('\2');
-        print_log(RED, "WARN", "Init keyboard\n", " > ");
+        print_log(RED, "ERR", "Init keyboard\n");
     }
     tset_color(LIGHT_CYAN, BLACK);
     print("\nWelcome to ");
@@ -122,11 +122,11 @@ void kstart(){
 void krun(){
     char enter_input[512];
     tset_color(WHITE, BLACK);
-    print("@");
+    print("[");
     tset_color(CYAN, BLACK);
     print(username);
     tset_color(WHITE, BLACK);
-    print(" $ ");
+    print("] >>> ");
     keyboard_input(enter_input);
     char command[32];
     memset(command, 0, 32);
@@ -144,15 +144,15 @@ void krun(){
             }
             tputchar('\n');
         } else {
-            print_log(RED, "ERROR", "Arguments is empty\n", " > ");
+            print_log(RED, "ERROR", "Arguments is empty\n");
         }
     } else if(strcheck(command, "help", 32)){
-        print_log(LIGHT_GREEN, "echo <text*>","        Print the text in terminal\n","");
-        print_log(LIGHT_GREEN, "clear","               Clear screen\n",              "");
-        print_log(LIGHT_GREEN, "setusername <name*>"," Set username\n",              "");
-        print_log(LIGHT_GREEN, "russia","              Show Russian flag\n",         "");
-        print_log(LIGHT_GREEN, "shutdown","            Power off\n",                 "");
-        print_log(LIGHT_GREEN, "reboot","              Restart machine\n",           "");
+        print_log(LIGHT_GREEN, "echo <text*>","        Print the text in terminal\n");
+        print_log(LIGHT_GREEN, "clear","               Clear screen\n");
+        print_log(LIGHT_GREEN, "setusername <name*>"," Set username\n");
+        print_log(LIGHT_GREEN, "russia","              Show Russian flag\n");
+        print_log(LIGHT_GREEN, "shutdown","            Power off\n");
+        print_log(LIGHT_GREEN, "reboot","              Restart machine\n");
     } else if(strcheck(command, "clear", 32)){
         clear();
     } else if(strcheck(command, "setusername", 32)){
@@ -162,9 +162,9 @@ void krun(){
                 username[ii] = enter_input[i];
                 ii++;
             }
-            print_log(GREEN, "OK", "Username is changed\n", " > ");
+            print_log(GREEN, "OK", "Username is changed\n");
         } else {
-            print_log(RED, "ERROR", "Arguments is empty\n", " > ");
+            print_log(RED, "ERROR", "Arguments is empty\n");
         }
     } else if(strcheck(command, "russia", 32)){
         for(int y = 0; y < 3; y++){
@@ -206,6 +206,6 @@ void krun(){
         tputchar('\n');
         infosystem(0);
     } else {
-        print_log(CYAN, "WARN", "Unknown command, please type 'help'\n", " > ");
+        print_log(CYAN, "WARN", "Unknown command, please type 'help'\n");
     }
 }

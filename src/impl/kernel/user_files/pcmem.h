@@ -1,1 +1,1 @@
-char username[32] = "user";
+char username[32] = "Beta Tester";
